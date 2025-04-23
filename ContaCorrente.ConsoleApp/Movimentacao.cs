@@ -4,16 +4,18 @@
     {
         public decimal Valor;
         public string TipoTransacao;
+        public string TipoOperacao;
 
-        public Movimentacao(decimal valor, string tipoTransacao)
+        public Movimentacao(decimal valor, string tipoTransacao, string tipoOperacao)
         {
             Valor = valor;
             TipoTransacao = tipoTransacao;
+            TipoOperacao = tipoOperacao;
         }
 
         public string MostrarMovimentacao()
         {
-            return $"{TipoTransacao}: R$ {Valor:F2}";
+            return $"{TipoOperacao} de R$ {Valor:F2} ({TipoTransacao})";
         }
     }
 }

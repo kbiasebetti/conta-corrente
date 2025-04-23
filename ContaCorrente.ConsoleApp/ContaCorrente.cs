@@ -14,7 +14,7 @@ namespace ContaCorrente.ConsoleApp
             if (valor <= saldo + limite)
             {
                 saldo -= valor;
-                RegistrarMovimentacao(valor, "Débito");
+                RegistrarMovimentacao(valor, "Débito", "Saque");
             }
             else
                 Console.WriteLine("Saque não autorizado: limite insuficiente.");
@@ -23,7 +23,7 @@ namespace ContaCorrente.ConsoleApp
         public void Depositar(decimal valor)
         {
             saldo += valor;
-            RegistrarMovimentacao(valor, "Crédito");
+            RegistrarMovimentacao(valor, "Crédito", "Depósito");
         }
 
         public void TransferirPara(ContaCorrente destino, decimal valor)
@@ -31,7 +31,8 @@ namespace ContaCorrente.ConsoleApp
             if (valor <= saldo + limite)
             {
                 Sacar(valor);
-                destino.Depositar(valor);
+                destino.ReceberTransferencia(valor, numero);
+                RegistrarMovimentacao(valor, "Débito", $"Transferência enviada para a conta {destino.numero}");
             }
             else
                 Console.WriteLine("Transferência não autorizada: limite insuficiente.");
@@ -42,15 +43,21 @@ namespace ContaCorrente.ConsoleApp
             Console.WriteLine($"Extrato da Conta {numero}");
 
             for (int i = 0; i < indiceMovimentacoes; i++)
-                Console.WriteLine(movimentacoes[i]);
+                Console.WriteLine(movimentacoes[i].MostrarMovimentacao());
 
             Console.WriteLine($"Saldo atual: R$ {saldo:F2}");
         }
 
-        private void RegistrarMovimentacao(decimal valor, string tipo)
+        private void ReceberTransferencia(decimal valor, int numeroContaOrigem)
+        {
+            saldo += valor;
+            RegistrarMovimentacao(valor, "Crédito", $"Transferência recebida da conta {numeroContaOrigem}");
+        }
+
+        private void RegistrarMovimentacao(decimal valor, string tipoTransacao, string tipoOperacao)
         {
             if (indiceMovimentacoes < movimentacoes.Length)
-                movimentacoes[indiceMovimentacoes++] = new Movimentacao(valor, tipo);
+                movimentacoes[indiceMovimentacoes++] = new Movimentacao(valor, tipoTransacao, tipoOperacao);
             else
                 Console.WriteLine("Limite de movimentações atingido.");
         }
